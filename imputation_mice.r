@@ -42,14 +42,13 @@ for(i in names(df_nonmiss[c(3:21)])){
 #parallel
 temp = mclapply(list(1,1,1,1),fun,mc.cores = 2)
 
-eval_df_nonmiss <- sum(apply(df_nonmiss[,3:21],2,sd)/apply(df_nonmiss[,3:21],2,mean))
+eval_df_nonmiss <- sum(apply(df_nonmiss[,3:21],2,sd,na.rm=TRUE)/apply(df_nonmiss[,3:21],2,mean,na.rm=TRUE))
 eval = 0
-nam = ''
 for (i in 1:4){
   impnam = paste('imp',i,sep = '')
   assign(impnam, complete(temp[[i]]))
   eval_temp <- sum(apply(get(impnam)[,3:21],2,sd)/apply(get(impnam)[,3:21],2,mean))
-  if (1/(1+abs(eval_temp - eval_df_nonmiss)) > eval){
+  if (1/(abs(eval_temp - eval_df_nonmiss)) > eval){
     eval <- eval_temp
     nam <- impnam
     }
@@ -58,4 +57,4 @@ for (i in 1:4){
 impc = get(nam)
 impe = eval
 
-write.csv(imp1, '/Users/rtaromax/Documents/cdc/Hospitalization/imp1.csv')
+write.csv(impc, '/Users/rtaromax/Documents/cdc/Hospitalization/imp1.csv')
